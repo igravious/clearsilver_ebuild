@@ -1,0 +1,40 @@
+--- ruby/ext/hdf/neo_util.c.orig	2011-10-17 21:05:45.470000000 +0300
++++ ruby/ext/hdf/neo_util.c	2011-10-17 21:06:10.050000000 +0300
+@@ -48,7 +48,7 @@
+ }
+ static void h_free(t_hdfh *hdfh) {
+ #ifdef DEBUG
+-  fprintf(stderr,"freeing hdf holder 0x%x of 0x%x\n",hdfh,hdfh->parent);
++  fprintf(stderr,"freeing hdf holder 0x%p of 0x%p\n",(void*)hdfh,(void*)hdfh->parent);
+ #endif
+   free(hdfh);
+ }
+@@ -57,12 +57,12 @@
+      set up the marker.
+    */
+ #ifdef DEBUG
+-  fprintf(stderr,"marking 0x%x\n",hdfh);
++  fprintf(stderr,"marking 0x%p\n",(void*)hdfh);
+ #endif
+   if ( ! NIL_P(hdfh->top) )
+     rb_gc_mark(hdfh->top);
+   else
+-    fprintf(stderr,"mark top 0x%x\n",hdfh);
++    fprintf(stderr,"mark top 0x%p\n",(void*)hdfh);
+ }
+ 
+ static VALUE h_init (VALUE self)
+@@ -619,12 +619,7 @@
+   rb_define_singleton_method(cHdf, "escape", h_escape, 3);
+   rb_define_singleton_method(cHdf, "unescape", h_unescape, 3);
+ 
+-  eHdfError = rb_define_class_under(mNeotonic, "HdfError",
+-#if RUBY_VERSION_MINOR >= 6
+-				    rb_eStandardError);
+-#else
+-                                    rb_eException);
+-#endif
++  eHdfError = rb_define_class_under(mNeotonic, "HdfError", rb_eStandardError);
+ 
+   Init_cs();
+ }

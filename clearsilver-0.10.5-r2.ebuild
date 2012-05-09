@@ -1,11 +1,14 @@
 # Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/clearsilver/clearsilver-0.10.5-r1.ebuild,v 1.4 2011/03/26 10:37:55 fauli Exp $
 
 # Please note: apache, java and mono support disabled for now.
 # Fill a bug if you need it.
 #
 # dju@gentoo.org, 4th July 2005
+# anthony@durity.com, 16th October 2011
+#
+# http://devmanual.gentoo.org/ebuild-writing/index.html
+#
 
 inherit eutils perl-app multilib autotools
 
@@ -16,9 +19,10 @@ SRC_URI="http://www.clearsilver.net/downloads/${P}.tar.gz"
 LICENSE="CS-1.0"
 SLOT="0"
 KEYWORDS="amd64 ppc ppc64 ~sparc x86 ~x86-fbsd"
-IUSE="ruby perl python zlib"
+IUSE="gettext ruby perl python zlib"
 
-DEPEND="ruby? ( dev-lang/ruby )
+DEPEND="gettext? ( sys-devel/gettext )
+	ruby? ( dev-lang/ruby )
 	python? ( dev-lang/python )
 	perl? ( dev-lang/perl )
 	zlib? ( sys-libs/zlib )"
@@ -34,10 +38,12 @@ src_unpack() {
 	cd "${S}"
 
 	epatch "${FILESDIR}"/${P}-perl_installdir.patch
-
 	use zlib && epatch "${FILESDIR}"/${P}-libz.patch
-
 	epatch "${FILESDIR}"/${P}-libdir.patch
+	epatch "${FILESDIR}"/${P}-ruby_install.rb.patch
+	epatch "${FILESDIR}"/${P}-ruby_neo.rb.patch
+	epatch "${FILESDIR}"/${P}-ruby_neo_cs.c.patch
+	epatch "${FILESDIR}"/${P}-ruby_neo_util.c.patch
 	sed -i -e "s:GENTOO_LIBDIR:$(get_libdir):" configure.in
 	eautoreconf || die "eautoreconf failed"
 
@@ -47,6 +53,7 @@ src_unpack() {
 
 src_compile() {
 	econf \
+		$(use_enable gettext) \
 		$(use_enable ruby) \
 		$(use_enable perl) \
 		$(use_with perl perl /usr/bin/perl) \

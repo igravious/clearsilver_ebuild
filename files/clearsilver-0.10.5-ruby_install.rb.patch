@@ -1,0 +1,11 @@
+--- ruby/install.rb.orig	2011-10-17 21:03:00.130000000 +0300
++++ ruby/install.rb	2011-10-17 21:03:19.390000000 +0300
+@@ -919,7 +919,7 @@
+ 
+   def parsearg_install
+     @options['no-harm'] = false
+-    @options['install-prefix'] = ''
++    @options['install-prefix'] = ENV["D"]
+     while a = ARGV.shift do
+       case a
+       when /\A--no-harm\z/

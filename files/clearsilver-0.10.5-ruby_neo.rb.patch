@@ -1,0 +1,35 @@
+--- ruby/lib/neo.rb.orig	2011-10-17 21:03:43.790000000 +0300
++++ ruby/lib/neo.rb	2011-10-17 21:04:16.270000000 +0300
+@@ -37,10 +37,29 @@
+     end
+ 
+   end
++  
++end
++
++module Neo
+ 
+-  class Cs < Neo::Cs
++  class Cs
++    def use(obj)
++      case obj
++      when Neo::Hdf # we should duck type, but i do not know what the protocol is :(
++        internal_use obj
++      else
++        raise TypeError("Expecting an object of class Neo::Hdf, not of class #{obj.class}")
++      end
++    end
+ 
++    def self.new(obj=nil)
++      if obj
++        Neo::Cs.create_with obj
++      else
++        Neo::Cs.create
++      end
++    end
+   end
+-end
+ 
+-      
++end
++  
